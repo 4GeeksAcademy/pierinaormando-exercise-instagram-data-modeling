@@ -1,32 +1,78 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__= 'user'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    user_name = Column(String (40), unique=True)
+    name = Column(String (40))
+    email = Column(String (100), unique=True)
+    password = Column(String (25))
+    description = Column(String (100))
+    photo_profile = Column(String (100))
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Post(Base):
+    __tablename__= 'post'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    description = Column(String (200))
+    image = Column(String)
+    publication_date = Column(Date)
 
-    def to_dict(self):
-        return {}
+class Like(Base):
+    __tablename__= 'like'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('post.id'))
+    post = relationship(Post)
+    date_like = Column(Date)
+
+class Notification(Base):
+    __tablename__= 'notification'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    type = Column(String)
+    date_notification = Column(Date)
+
+class Direct_Message(Base):
+    __tablename__= 'direct_message'
+    id = Column(Integer, primary_key=True)
+    user_from_id = Column(Integer, ForeignKey('user.id'))
+    user_to_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    date_message = Column(Date)
+
+class Comment(Base):
+    __tablename__= 'comment'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('post.id'))
+    post = relationship(Post)
+    date_comment = Column(Date)
+
+class Story(Base):
+    __tablename__= 'story'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    date_story = Column(Date)
+
+class Follower(Base):
+    __tablename__= 'follower'
+    id = Column(Integer, primary_key=True)
+    user_from_id = Column(Integer, ForeignKey('user.id'))
+    user_to_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 ## Draw from SQLAlchemy base
 try:
